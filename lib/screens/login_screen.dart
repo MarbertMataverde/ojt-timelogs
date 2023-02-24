@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ojt_timelogs/authentication/auth_login.dart';
+import 'package:ojt_timelogs/core/constant/constant.dart';
 import 'package:ojt_timelogs/core/validator/validator.dart';
 import 'package:ojt_timelogs/core/widget/core_loading_animation.dart';
 import 'package:ojt_timelogs/main.dart';
@@ -38,99 +41,109 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff0b1f24),
-      body: Column(
-        children: [
-          const Expanded(
-            child: RiveAnimation.asset(
-              'assets/rive/work.riv',
+        backgroundColor: const Color(0xfff1f7f9),
+        body: Stack(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Image.asset(CoreConstant.morningAssetPath),
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: SizedBox(
-              width: 500,
-              child: Column(
-                children: [
-                  const Text(
-                    'OJT TIMELOGS LOGIN',
-                    style: TextStyle(
-                      color: Color(0xffafc5e9),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        CustomTextFormField(
-                          controller: internEmail,
-                          hintText: 'Intern Email',
-                          keyboardType: TextInputType.emailAddress,
-                          validator: internEmailValidator,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomTextFormField(
-                          keyboardType: TextInputType.visiblePassword,
-                          controller: internPassword,
-                          hintText: 'Password',
-                          isPassword: true,
-                          validator: passwordValidator,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Consumer(builder:
-                      (BuildContext context, WidgetRef ref, Widget? child) {
-                    return ref.watch(isSigningInStateProvider)
-                        ? coreLoadingAnimationWidget()
-                        : SizedBox(
-                            width: double.infinity,
-                            height: 55,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  ref
-                                      .read(isSigningInStateProvider.notifier)
-                                      .update((state) =>
-                                          !ref.read(isSigningInStateProvider));
-                                  await internLogin(
-                                    context: context,
-                                    internEmail: internEmail.text,
-                                    internPassword: internPassword.text,
-                                  );
-                                  ref
-                                      .read(isSigningInStateProvider.notifier)
-                                      .update((state) =>
-                                          !ref.read(isSigningInStateProvider));
-                                }
-                              },
-                              child: const Text(
-                                'Submit',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          );
-                  })
-                ],
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: const SizedBox(
+                width: double.infinity,
+                height: double.infinity,
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 400,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'OJT TIMELOGS LOGIN',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          CustomTextFormField(
+                            controller: internEmail,
+                            hintText: 'Intern Email',
+                            keyboardType: TextInputType.emailAddress,
+                            validator: internEmailValidator,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextFormField(
+                            keyboardType: TextInputType.visiblePassword,
+                            controller: internPassword,
+                            hintText: 'Password',
+                            isPassword: true,
+                            validator: passwordValidator,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Consumer(builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) {
+                      return ref.watch(isSigningInStateProvider)
+                          ? coreLoadingAnimationWidget()
+                          : SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black87,
+                                  elevation: 0,
+                                ),
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    ref
+                                        .read(isSigningInStateProvider.notifier)
+                                        .update((state) => !ref
+                                            .read(isSigningInStateProvider));
+                                    await internLogin(
+                                      context: context,
+                                      internEmail: internEmail.text,
+                                      internPassword: internPassword.text,
+                                    );
+                                    ref
+                                        .read(isSigningInStateProvider.notifier)
+                                        .update((state) => !ref
+                                            .read(isSigningInStateProvider));
+                                  }
+                                },
+                                child: const Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            );
+                    })
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }
