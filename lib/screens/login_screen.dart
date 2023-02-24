@@ -7,7 +7,6 @@ import 'package:ojt_timelogs/core/constant/constant.dart';
 import 'package:ojt_timelogs/core/validator/validator.dart';
 import 'package:ojt_timelogs/core/widget/core_loading_animation.dart';
 import 'package:ojt_timelogs/main.dart';
-import 'package:rive/rive.dart';
 
 final isSigningInStateProvider = StateProvider((ref) => false);
 
