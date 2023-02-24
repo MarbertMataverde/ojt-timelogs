@@ -16,4 +16,6 @@ class CoreConstant {
   static const String morningAssetPath = 'assets/gifs/morning.gif';
   static const String nightAssetPath = 'assets/gifs/night.gif';
   static const String sunriseAssetPath = 'assets/gifs/sunrise.gif';
+
+  static const String adminUid = 'aRFmDel7MxMGRlxsKhGM8Owiqaf1';
 }

@@ -50,14 +50,14 @@ class CustomTextFormField extends StatelessWidget {
     this.isPassword,
     required this.controller,
     this.validator,
-    required this.keyboardType,
+    this.keyboardType,
   }) : super(key: key);
 
   final String hintText;
   final bool? isPassword;
   final TextEditingController controller;
   final String? Function(String?)? validator;
-  final TextInputType keyboardType;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {

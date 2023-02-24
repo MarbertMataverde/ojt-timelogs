@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:ojt_timelogs/authentication/auth_logout.dart';
 import 'package:ojt_timelogs/core/constant/constant.dart';
+import 'package:ojt_timelogs/core/widget/core_add_intern_dialog.dart';
 import 'package:ojt_timelogs/core/widget/core_show_dialog.dart';
+import 'package:ojt_timelogs/services/serive_time_out_record.dart';
+import 'package:ojt_timelogs/services/service_time_in_record.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
@@ -40,9 +45,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     timeNow = DateFormat('j').format(DateTime.now());
+    currentUserName = FirebaseAuth.instance.currentUser!.displayName;
     super.initState();
   }
 
+  late String? currentUserName;
   DateFormat dateFormat = DateFormat('MMMM d (EEEE)').add_jm();
 
   @override
@@ -64,47 +71,79 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             height: double.infinity,
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 20, right: 20),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.white38,
+            padding: const EdgeInsets.only(left: 20, top: 10, right: 20),
+            child: Row(
+              children: [
+                Text(
+                  currentUserName.toString() == 'null'
+                      ? 'Admin'
+                      : currentUserName.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                  ),
                 ),
-                label: const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white),
+                const Spacer(),
+                Visibility(
+                  visible: FirebaseAuth.instance.currentUser!.uid ==
+                      CoreConstant.adminUid,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                    label: const Text(
+                      'Add Intern',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.transparent,
+                        builder: (context) => const CoreAddInternDialog(),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.person_add_alt_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-                onPressed: () => logout(),
-                icon: const Icon(
-                  Icons.logout_rounded,
-                  color: Colors.white,
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ),
+                  label: const Text(
+                    'History',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.history,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20, right: 120),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.white38,
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ),
+                  label: const Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () => logout(),
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    color: Colors.white,
+                  ),
                 ),
-                label: const Text(
-                  'History',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.history,
-                  color: Colors.white,
-                ),
-              ),
+              ],
             ),
           ),
           Align(
@@ -154,6 +193,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           onPressed: () {
                             coreShowCustomDialogWidget(
                               buttonRightText: 'Confirm',
+                              buttonRightVoidCallback: () => timeInRecord(
+                                internName: currentUserName.toString(),
+                                activeInternTimeIn: Timestamp.now(),
+                                context: context,
+                              ).then((value) => Navigator.pop(context)),
                               context: context,
                               title: 'Confirm Time In',
                               isTwoButton: true,
@@ -176,7 +220,25 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                             backgroundColor: Colors.red,
                           ),
                           child: const Text('Time Out'),
-                          onPressed: () {},
+                          onPressed: () {
+                            coreShowCustomDialogWidget(
+                              buttonRightText: 'Confirm',
+                              buttonRightVoidCallback: () => timeOutRecord(
+                                context: context,
+                                internName: currentUserName.toString(),
+                              ).then((value) => Navigator.pop(context)),
+                              context: context,
+                              title: 'Confirm Time Out',
+                              isTwoButton: true,
+                              isContentCentered: true,
+                              buttonLeftText: 'Cancel',
+                              contentTextStyle: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
+                              content: dateFormat.format(
+                                DateTime.now(),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
