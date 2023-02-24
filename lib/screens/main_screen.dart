@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:ojt_timelogs/authentication/auth_logout.dart';
 import 'package:ojt_timelogs/core/constant/constant.dart';
+import 'package:ojt_timelogs/core/widget/core_show_dialog.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
@@ -17,14 +19,20 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   late final String timeNow;
 
   String getBackgroundAssetPath() {
-    if (timeNow == '12 AM' ||
+    if (timeNow == '6 PM' ||
+        timeNow == '7 PM' ||
+        timeNow == '8 PM' ||
+        timeNow == '9 PM' ||
+        timeNow == '10 PM' ||
+        timeNow == '11 PM' ||
+        timeNow == '12 AM' ||
         timeNow == '1 AM' ||
-        timeNow == '2 AM' ||
-        timeNow == '3 AM' ||
-        timeNow == '4 AM' ||
-        timeNow == '5 AM') {
+        timeNow == '2 AM') {
       return CoreConstant.nightAssetPath;
-    } else if (timeNow == '6 AM') {
+    } else if (timeNow == '3 AM' ||
+        timeNow == '4 AM' ||
+        timeNow == '5 AM' ||
+        timeNow == '6 AM') {
       return CoreConstant.sunriseAssetPath;
     } else {
       return CoreConstant.morningAssetPath;
@@ -36,6 +44,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     timeNow = DateFormat('j').format(DateTime.now());
     super.initState();
   }
+
+  DateFormat dateFormat = DateFormat('MMMM d (EEEE)').add_jm();
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +73,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   backgroundColor: Colors.transparent,
+                  shadowColor: Colors.white38,
                 ),
                 label: const Text(
                   'Logout',
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () {},
+                onPressed: () => logout(),
                 icon: const Icon(
                   Icons.logout_rounded,
                   color: Colors.white,
@@ -84,6 +95,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   backgroundColor: Colors.transparent,
+                  shadowColor: Colors.white38,
                 ),
                 label: const Text(
                   'History',
@@ -141,7 +153,21 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                             backgroundColor: Colors.green,
                           ),
                           child: const Text('Time In'),
-                          onPressed: () {},
+                          onPressed: () {
+                            coreShowCustomDialogWidget(
+                              buttonRightText: 'Confirm',
+                              context: context,
+                              title: 'Confirm Time In',
+                              isTwoButton: true,
+                              isContentCentered: true,
+                              buttonLeftText: 'Cancel',
+                              contentTextStyle: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
+                              content: dateFormat.format(
+                                DateTime.now(),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       SizedBox(
