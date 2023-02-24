@@ -146,6 +146,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ],
             ),
           ),
+          const Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              'v1.0.0',
+              style: TextStyle(
+                color: Colors.white60,
+              ),
+            ),
+          ),
           Align(
             alignment: Alignment.center,
             child: SizedBox(
