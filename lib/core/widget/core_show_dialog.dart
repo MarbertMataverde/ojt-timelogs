@@ -8,7 +8,9 @@ Future<dynamic> coreShowCustomDialogWidget({
   String? assetPath, // default: notice animated icon
   String? buttonLeftText,
   String? buttonRightText,
+  bool? isContentCentered,
   bool? isTwoButton = false,
+  TextStyle? contentTextStyle,
   Function()? buttonLeftVoidCallback,
   Function()? buttonRightVoidCallback,
 }) {
@@ -17,10 +19,10 @@ Future<dynamic> coreShowCustomDialogWidget({
     builder: (context) => Dialog(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(10),
         child: SizedBox(
           height: 200,
-          width: 400,
+          width: 300,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,26 +50,35 @@ Future<dynamic> coreShowCustomDialogWidget({
               const SizedBox(
                 height: 20,
               ),
-              Text(
-                content,
+              Align(
+                alignment: isContentCentered ?? false
+                    ? Alignment.center
+                    : Alignment.centerLeft,
+                child: Text(
+                  content,
+                  style: contentTextStyle,
+                ),
               ),
               const SizedBox(
                 height: 20,
               ),
               Row(
                 mainAxisAlignment: isTwoButton == true
-                    ? MainAxisAlignment.spaceBetween
+                    ? MainAxisAlignment.spaceAround
                     : MainAxisAlignment.center,
                 children: [
                   Visibility(
                     visible: isTwoButton ?? true,
                     child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.grey.shade400,
+                      ),
                       onPressed: buttonLeftVoidCallback ??
                           () => Navigator.pop(context),
                       child: Text(
                         buttonLeftText ?? 'Dismiss',
                         style: const TextStyle(
-                          color: Color(0xfff5f8fd),
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -76,13 +87,12 @@ Future<dynamic> coreShowCustomDialogWidget({
                     onPressed:
                         buttonRightVoidCallback ?? () => Navigator.pop(context),
                     style: TextButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).primaryColor.withAlpha(30),
+                      backgroundColor: Colors.green,
                     ),
                     child: Text(
                       buttonRightText ?? 'Okay, Continue',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
+                      style: const TextStyle(
+                        color: Colors.white,
                       ),
                     ),
                   ),
