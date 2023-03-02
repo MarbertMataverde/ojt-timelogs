@@ -13,9 +13,9 @@ class CoreConstant {
   static const String networkRequestFailedMessage =
       'We apologize, but it looks like you are currently not connected to the internet. Please check your internet connection and try again.';
 
-  static const String morningAssetPath = 'assets/gifs/morning.gif';
-  static const String nightAssetPath = 'assets/gifs/night.gif';
-  static const String sunriseAssetPath = 'assets/gifs/sunrise.gif';
+  static const String morningAssetPath = 'assets/video/morning.mp4';
+  static const String nightAssetPath = 'assets/video/night.mp4';
+  static const String sunriseAssetPath = 'assets/video/sunrise.mp4';
 
   static const String adminUid = 'aRFmDel7MxMGRlxsKhGM8Owiqaf1';
 }

@@ -11,6 +11,7 @@ import 'package:ojt_timelogs/core/widget/core_show_dialog.dart';
 import 'package:ojt_timelogs/services/serive_time_out_record.dart';
 import 'package:ojt_timelogs/services/service_time_in_record.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
+import 'package:video_player/video_player.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -22,7 +23,10 @@ class MainScreen extends ConsumerStatefulWidget {
 class _MainScreenState extends ConsumerState<MainScreen> {
   late final String timeNow;
 
-  String getBackgroundAssetPath() {
+  // video player controller
+  late VideoPlayerController videoPlayerController;
+
+  VideoPlayerController getBackgroundAssetPath() {
     if (timeNow == '6 PM' ||
         timeNow == '7 PM' ||
         timeNow == '8 PM' ||
@@ -32,22 +36,44 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         timeNow == '12 AM' ||
         timeNow == '1 AM' ||
         timeNow == '2 AM') {
-      return CoreConstant.nightAssetPath;
+      return VideoPlayerController.asset(CoreConstant.nightAssetPath)
+        ..initialize().then((value) {
+          videoPlayerController.play();
+          videoPlayerController.setLooping(true);
+          setState(() {});
+        });
     } else if (timeNow == '3 AM' ||
         timeNow == '4 AM' ||
         timeNow == '5 AM' ||
         timeNow == '6 AM') {
-      return CoreConstant.sunriseAssetPath;
+      return VideoPlayerController.asset(CoreConstant.sunriseAssetPath)
+        ..initialize().then((value) {
+          videoPlayerController.play();
+          videoPlayerController.setLooping(true);
+          setState(() {});
+        });
     } else {
-      return CoreConstant.morningAssetPath;
+      return VideoPlayerController.asset(CoreConstant.morningAssetPath)
+        ..initialize().then((value) {
+          videoPlayerController.play();
+          videoPlayerController.setLooping(true);
+          setState(() {});
+        });
     }
   }
 
   @override
   void initState() {
+    super.initState();
     timeNow = DateFormat('j').format(DateTime.now());
     currentUserName = FirebaseAuth.instance.currentUser!.displayName;
-    super.initState();
+    videoPlayerController = getBackgroundAssetPath();
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+    super.dispose();
   }
 
   late String? currentUserName;
@@ -57,18 +83,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: Image.asset(
-              getBackgroundAssetPath(),
+          SizedBox.expand(
+            child: FittedBox(
               fit: BoxFit.cover,
+              child: SizedBox(
+                height: videoPlayerController.value.size.height,
+                width: videoPlayerController.value.size.width,
+                child: VideoPlayer(videoPlayerController),
+              ),
             ),
-          ),
-          Container(
-            color: Colors.black.withOpacity(0.3),
-            width: double.infinity,
-            height: double.infinity,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 10, right: 20),

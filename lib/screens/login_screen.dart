@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     internEmail = TextEditingController();
     internPassword = TextEditingController();
     videoPlayerController =
-        VideoPlayerController.asset('assets/video/morning.mp4')
+        VideoPlayerController.asset(CoreConstant.morningAssetPath)
           ..initialize().then((value) {
             videoPlayerController.play();
             videoPlayerController.setLooping(true);
