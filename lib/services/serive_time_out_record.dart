@@ -14,23 +14,40 @@ Future<void> timeOutRecord({
       .collection(internName)
       .doc('active-time-in')
       .get()
-      .then((value) async => timeIn = await value.get('time-in'));
+      .then(
+    (value) async {
+      if (value.exists) {
+        timeIn = await value.get('time-in');
 
-  // this will record the time in and out to time-in-and-out-doc as random docs
-  await FirebaseFirestore.instance
-      .collection(internName)
-      .doc('time-in-and-out-records')
-      .collection('records')
-      .doc()
-      .set({
-    'intern-name': internName,
-    'time-in': dateFormat.format(timeIn.toDate()),
-    'time-out': dateFormat.format(DateTime.now()),
-  });
+        // this will record the time in and out to time-in-and-out-doc as random docs
+        await FirebaseFirestore.instance
+            .collection(internName)
+            .doc('time-in-and-out-records')
+            .collection('records')
+            .doc()
+            .set(
+          {
+            'intern-name': internName,
+            'time-in': dateFormat.format(timeIn.toDate()),
+            'time-out': dateFormat.format(DateTime.now()),
+          },
+        );
 
-  // this delete active time in
-  await FirebaseFirestore.instance
-      .collection(internName)
-      .doc('active-time-in')
-      .delete();
+        // this delete active time in
+        await FirebaseFirestore.instance
+            .collection(internName)
+            .doc('active-time-in')
+            .delete();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+              'There is no active time in!',
+            ),
+          ),
+        );
+      }
+    },
+  );
 }

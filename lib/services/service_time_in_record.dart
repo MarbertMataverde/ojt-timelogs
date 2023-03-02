@@ -17,6 +17,7 @@ Future<void> timeInRecord({
     if (value.exists) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text(
             'There is an active time in, you cannot time in multiple times.',
           ),
