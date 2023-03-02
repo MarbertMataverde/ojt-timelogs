@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:ojt_timelogs/authentication/auth_logout.dart';
 import 'package:ojt_timelogs/core/constant/constant.dart';
@@ -50,7 +51,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   late String? currentUserName;
-  DateFormat dateFormat = DateFormat('MMMM d (EEEE)').add_jm();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             ),
           ),
           Container(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.3),
             width: double.infinity,
             height: double.infinity,
           ),
@@ -252,11 +252,77 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection(currentUserName.toString())
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Text('No Data');
+                        } else {
+                          final data = snapshot.data!.docs;
+
+                          return ListView.builder(
+                            itemCount: data.length,
+                            itemBuilder: (context, index) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SpinKitPulse(
+                                  color: Colors.green,
+                                  size: 40.0,
+                                ),
+                                const Text(
+                                  'Active Time In',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                // dateFormat.format(data[0]['time-in'])
+                                ConvertedTimestampToFormatedDateTime(
+                                  timestamp: data[0]['time-in'],
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+DateFormat dateFormat = DateFormat('MMMM d (EEEE)').add_jm();
+
+class ConvertedTimestampToFormatedDateTime extends StatelessWidget {
+  final Timestamp timestamp;
+
+  const ConvertedTimestampToFormatedDateTime(
+      {super.key, required this.timestamp});
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime dateTime = timestamp.toDate();
+    String formattedDateTime = dateFormat.format(dateTime);
+    return Text(
+      formattedDateTime,
+      style: const TextStyle(
+        fontSize: 20,
+        color: Colors.white,
+        fontWeight: FontWeight.w500,
       ),
     );
   }
