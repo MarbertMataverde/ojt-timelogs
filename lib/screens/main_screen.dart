@@ -8,6 +8,7 @@ import 'package:ojt_timelogs/authentication/auth_logout.dart';
 import 'package:ojt_timelogs/core/constant/constant.dart';
 import 'package:ojt_timelogs/core/widget/core_add_intern_dialog.dart';
 import 'package:ojt_timelogs/core/widget/core_show_dialog.dart';
+import 'package:ojt_timelogs/screens/history_screen.dart';
 import 'package:ojt_timelogs/services/serive_time_out_record.dart';
 import 'package:ojt_timelogs/services/service_time_in_record.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
@@ -66,7 +67,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void initState() {
     super.initState();
     timeNow = DateFormat('j').format(DateTime.now());
-    currentUserName = FirebaseAuth.instance.currentUser!.displayName;
+    currentInternName = FirebaseAuth.instance.currentUser!.displayName;
     videoPlayerController = getBackgroundAssetPath();
   }
 
@@ -76,7 +77,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     super.dispose();
   }
 
-  late String? currentUserName;
+  late String? currentInternName;
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +94,31 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ),
             ),
           ),
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black.withOpacity(timeNow == '7 AM' ||
+                    timeNow == '8 AM' ||
+                    timeNow == '9 AM' ||
+                    timeNow == '10 AM' ||
+                    timeNow == '11 AM' ||
+                    timeNow == '12 PM' ||
+                    timeNow == '1 PM' ||
+                    timeNow == '2 PM' ||
+                    timeNow == '3 PM' ||
+                    timeNow == '4 PM' ||
+                    timeNow == '5 PM'
+                ? 0.3
+                : 0.0),
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 10, right: 20),
             child: Row(
               children: [
                 Text(
-                  currentUserName.toString() == 'null'
+                  currentInternName.toString() == 'null'
                       ? 'Admin'
-                      : currentUserName.toString(),
+                      : currentInternName.toString(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
@@ -144,7 +162,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     'History',
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: () {},
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => HistoryScreen(
+                        currentInternName: currentInternName as String),
+                  ),
                   icon: const Icon(
                     Icons.history,
                     color: Colors.white,
@@ -226,7 +248,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                             coreShowCustomDialogWidget(
                               buttonRightText: 'Confirm',
                               buttonRightVoidCallback: () => timeInRecord(
-                                internName: currentUserName.toString(),
+                                internName: currentInternName.toString(),
                                 activeInternTimeIn: Timestamp.now(),
                                 context: context,
                               ).then((value) => Navigator.pop(context)),
@@ -257,7 +279,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               buttonRightText: 'Confirm',
                               buttonRightVoidCallback: () => timeOutRecord(
                                 context: context,
-                                internName: currentUserName.toString(),
+                                internName: currentInternName.toString(),
                               ).then((value) => Navigator.pop(context)),
                               context: context,
                               title: 'Confirm Time Out',
@@ -282,7 +304,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     height: 100,
                     child: StreamBuilder(
                       stream: FirebaseFirestore.instance
-                          .collection(currentUserName.toString())
+                          .collection(currentInternName.toString())
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
